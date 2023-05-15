@@ -2,7 +2,7 @@ log_format  custom                        'Remote_Add= $remote_addr , '
                                               'TIMESTAMP= [$time_local] , '
                                        	      'REQUEST_URL="$request" , '
                                        	      'CODE= $status , Body_bytes= $body_bytes_sent , '
-                                       	      'APP= AdminPanel , '
+                                       	      'APP= todolist , '
                                        
                                               'request_time=$request_time , '
                                               'upstream_response_time=$upstream_response_time , '
