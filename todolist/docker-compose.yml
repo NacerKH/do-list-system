@@ -1,0 +1,101 @@
+version: '3.8'
+services:
+   todo-list :
+       build :
+         context : .
+         dockerfile: Dockerfile
+       image : todo-list 
+       container_name : todo-list
+       extra_hosts:
+        - "host.docker.internal:host-gateway"
+       restart: unless-stopped
+       tty: true
+       environment:
+          APP_KEY: base64:TPTxTtLRf5q57od1Q3hUCazPEZMxPyxHwf6uv+5q7PU=
+          APP_URL: "http://localhost:6009"
+          SERVICE_NAME: todo-list 
+          SERVICE_TAGS: dev
+          DB_CONNECTION: mysql
+          DB_HOST: todo-list-db
+          DB_DATABASE: todo-list-db
+          DB_PASSWORD: passwd
+          DB_PORT: 3306
+          DB_USERNAME: root
+          APP_ENV: local
+          APP_DEBUG: "true"
+          TOKEN_EXPIRY_HOURS: 3
+          DB_TLS_PATH: ""
+          MAIL_MAILER: smtp
+          MAIL_HOST: sandbox.smtp.mailtrap.io
+          MAIL_PORT: 465
+          MAIL_USERNAME: 9e4a5ea9a6c6c6
+          MAIL_PASSWORD: 35342e0f3bb55c
+          MAIL_ENCRYPTION: 
+          MAIL_FROM_ADDRESS: laravel@test.com
+          MAIL_FROM_NAME: "${APP_NAME}"
+
+       ports:
+          - 6009:80
+       working_dir: /var/www
+       volumes:
+        - ./:/var/www
+        - ./php.ini:/usr/local/etc/php/conf.d/local.ini
+        - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      
+       networks:
+        - todo-list-network
+       command: bash -c "
+        (composer install || true) &&
+        (php artisan migrate || true) &&
+        (php artisan config:cache || true) &&
+        (php artisan route:clear || true)  &&
+        (nginx -t && nginx) &&
+        php-fpm"
+
+   todo-list-db:
+        image: mysql:5.7.22
+        container_name: todo-list-db
+        restart: unless-stopped
+        tty: true
+        ports:
+          - "33070:3306"
+        environment:
+          MYSQL_DATABASE: todo-list-db
+          MYSQL_ROOT_PASSWORD: "passwd"
+          SERVICE_TAGS: dev
+          SERVICE_NAME: mysql
+        volumes:
+          - dbdata:/var/lib/mysql/
+        networks:
+          -  todo-list-network
+
+   node-todo-list:
+ 
+      image: node:18-alpine
+      environment:
+       APP_URL : "https://localhost:6009"
+      working_dir: /var/www
+      tty : true
+      command : "npm install  && npm run dev "  
+      volumes:
+        - .:/var/www
+      depends_on : 
+        - todo-list
+      ports:
+        - '5173:5173'  
+
+      networks:
+       -  todo-list-network
+  
+#Docker Networks
+networks:
+  todo-list-network:
+    driver: bridge
+      
+#Volumes
+volumes:
+  dbdata:
+
+    driver: local
+
+        
