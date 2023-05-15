@@ -18,7 +18,8 @@ class Task extends Model
         'title',
         'description',
         'priority',
-        'date_of_completion'
+        'date_of_completion', 
+        'status'
     ];
     /**
      * The attributes that should be cast.
