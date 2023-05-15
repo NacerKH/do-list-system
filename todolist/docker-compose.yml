@@ -72,6 +72,7 @@ services:
    node-todo-list:
  
       image: node:18-alpine
+      container_name: todo-list-node
       environment:
        APP_URL : "https://localhost:6009"
       working_dir: /var/www
