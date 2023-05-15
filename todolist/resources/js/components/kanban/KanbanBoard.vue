@@ -9,6 +9,7 @@ import PlusIcon from '@/components/icons/PlusIcon.vue'
 import CloseIcon from '@/components/icons/CloseIcon.vue'
 import SaveIcon from '@/components/icons/SaveIcon.vue'
 import { container } from 'tailwindcss/defaultTheme'
+import axios from 'axios'
 
 const props = defineProps({
   payload: {
@@ -99,13 +100,20 @@ const dropItem = (event, containerId) => {
   vuello.last_modified = new Date().toLocaleString('en-GB')
   store.dispatch('vuello/setVuello', vuello)
 }
-const handleDeleteItem = (type, id) => {
+const handleDeleteItem = async (type, id) => {
   if (type === 'container') {
     state.selectedContainerId = id
     state.isRemovingContainer = true
   } else {
     state.selectedCardId = id
     state.isRemovingCard = true
+     try {
+      await axios.delete(`/api/tasks/${id}`);
+      // Success! Handle any additional logic here
+    } catch (error) {
+      // Error occurred. Handle or display the error message
+      console.error(error);
+    }
   }
 }
 const deleteItem = (type) => {
@@ -126,7 +134,8 @@ const deleteItem = (type) => {
   state.isRemovingContainer = false
   state.isRemovingCard = false
 }
-const handleKanbanAction = (mode, type, containerId, payload) => {
+const handleKanbanAction = async (mode, type, containerId, payload) => {
+
   if (mode === 'add') {
     if (type === 'container') {
       const newContainer = {
@@ -139,16 +148,29 @@ const handleKanbanAction = (mode, type, containerId, payload) => {
       vuello.containers.push(newContainer)
       state.isAddingContainer = false
     } else {
+      console.log(payload)
+     
       newCardData.id =
         vuello.cards.length > 0 ? [...vuello.cards].pop().id + 1 : 1
       newCardData.id_container = containerId
+     
       const newCard = {
         id: newCardData.id,
-        id_container: newCardData.id_container,
+        status: "TODO",
         title: newCardData.title,
-        content: newCardData.content,
+        description: newCardData.content,
+        priority: newCardData.priority,
+       
       }
+
       vuello.cards.push(newCard)
+              try {
+        await axios.post('/api/tasks/', newCard);
+        // Success! Handle any additional logic here
+      } catch (error) {
+        // Error occurred. Handle or display the error message
+        console.error(error);
+      }
       payload.is_adding_card = false
     }
   } else if (mode === 'delete') {
@@ -168,18 +190,22 @@ const handleKanbanAction = (mode, type, containerId, payload) => {
       : (payload.is_editing_card = false)
   }
   vuello.last_modified = new Date().toLocaleString('en-GB')
-  store.dispatch('vuello/setVuello', vuello)
+  // store.dispatch('vuello/setVuello', vuello)
   newCardData.id = null
   newCardData.id_container = null
   newCardData.title = null
   newCardData.content = null
 }
-const handleEditCard = (type, selectedCard) => {
+const handleEditCard = async(type, selectedCard) => {
+  console.log(selectedCard)
   if (type === 'change') {
     selectedCard.is_editing_card = true
+ console.log(selectedCard);
     state.tempCards = vuello.cards.map((card) => ({ ...card }))
+
   } else if (type === 'save') {
     handleKanbanAction(null, null, null, selectedCard)
+
   } else {
     const data = state.tempCards.find((card) => card.id === selectedCard.id)
     selectedCard.title = data.title
@@ -263,6 +289,11 @@ const handleEditCard = (type, selectedCard) => {
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Add Card Content"
                   />
+                         <input type="number" max="5"
+                        v-model="card.priority"
+                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:ring-blue-500"
+                        placeholder="Add Card priority"
+                      />
                   <div
                     class="mt-2 flex w-full place-items-center justify-between"
                   >
@@ -332,6 +363,11 @@ const handleEditCard = (type, selectedCard) => {
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Add Card Content"
                   />
+                     <input type="number" max="5"
+                      v-model="newCardData.priority"
+                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:ring-blue-500"
+                      placeholder="Add Card priority"
+                    />
                 </div>
               </Transition>
               <Transition name="fade" mode="out-in">
