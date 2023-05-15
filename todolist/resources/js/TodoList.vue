@@ -23,7 +23,7 @@ onBeforeMount(async () => {
     const data = store.getters['vuello/getVuelloDatas']
     if (!data) {
         await axios.get('/api/tasks').then(({ data }) => {
-            store.dispatch('vuello/setVuello', data)
+            store.dispatch('vuello/setVuello', data.data)
         })
     }
 })
@@ -55,11 +55,11 @@ const openRepo = () => {
                         <span
                             class="rounded-md px-2 text-3xl font-bold transition-all duration-300 ease-in-out hover:cursor-pointer hover:bg-slate-200"
                             @click="handleEditTitle('edit')">
-                            {{ payload.title }}
+                            {{ payload['0'].title }}
                         </span>
                     </div>
                     <div v-else class="flex place-items-center">
-                        <input v-model="payload.title" type="text"
+                        <input v-model="payload['0'].title" type="text"
                             class="block w-[230px] rounded-lg border border-gray-300 bg-gray-50 p-2 text-xl text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:ring-blue-500"
                             placeholder="Add Board Title" @keypress.enter="handleEditTitle('save')" />
                         <div class="ml-2 flex place-items-center justify-center">
@@ -73,7 +73,7 @@ const openRepo = () => {
                     </div>
                 </Transition>
                 <h3 class="my-2 px-2 text-sm">
-                    Last Modified : {{ payload.last_modified }}
+                    Last Modified : {{ payload['0'].updated_at }}
                 </h3>
             </div>
             <div class="mt-px flex place-items-start justify-center">

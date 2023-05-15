@@ -41,7 +41,26 @@ const newCardData = reactive({
 const vuello = reactive({
   title: null,
   last_modified: null,
-  containers: [],
+  containers: [
+    {
+      "id": 1,
+      "name": "TODO",
+      "is_editing_container": false,
+      "is_adding_card": false
+    },
+    {
+      "id": 2,
+      "name": "DONE",
+      "is_editing_container": false,
+      "is_adding_card": false
+    },
+        {
+      "id": 3,
+      "name": "PROGRESS",
+      "is_editing_container": false,
+      "is_adding_card": false
+    }
+  ],
   cards: [],
 })
 
@@ -49,9 +68,9 @@ watch(
   () => props.payload,
   (newValue) => {
     vuello.title = newValue.title
-    vuello.last_modified = newValue.last_modified
-    vuello.containers = newValue.containers
-    vuello.cards = newValue.cards
+    vuello.last_modified = newValue.updated_at
+    // vuello.containers = newValue.status
+    vuello.cards = newValue
   },
   { immediate: true }
 )
@@ -66,7 +85,7 @@ watch(
 )
 
 const cardList = (containerId) => {
-  return vuello.cards.filter((card) => card.id_container === containerId)
+  return vuello.cards.filter((card) => card.status === containerId)
 }
 const dragItem = (event, item) => {
   event.dataTransfer.dropEffect = 'move'
@@ -175,6 +194,7 @@ const handleEditCard = (type, selectedCard) => {
     class="flex h-full w-full overflow-auto rounded-lg bg-[#F2F3F9] px-2 py-3"
   >
     <TransitionGroup name="list">
+  
       <div
         v-for="container in vuello.containers"
         :key="container.id"
@@ -206,13 +226,13 @@ const handleEditCard = (type, selectedCard) => {
                 class="text-md my-[0.30rem] w-full cursor-pointer p-1 font-semibold"
                 @click="container.is_editing_container = true"
               >
-                {{ container.name }} ({{ cardList(container.id).length }})
+                {{ container.name }} ({{ cardList(container.name).length }})
               </div>
             </Transition>
             <TrashIcon
               height="25px"
               class="cursor-pointer rounded-full p-1 text-red-400 hover:bg-red-200 hover:text-red-700"
-              @click="handleDeleteItem('container', container.id)"
+              @click="handleDeleteItem('container', container.name)"
             />
           </div>
           <div
@@ -220,12 +240,13 @@ const handleEditCard = (type, selectedCard) => {
             style="max-height: calc(100vh - 165px)"
           >
             <div
-              v-for="card in cardList(container.id)"
+              v-for="card in cardList(container.name)"
               :key="card.id"
               class="m-1 cursor-pointer rounded-lg bg-white p-2"
               :draggable="state.isDraggable"
               @dragstart="dragItem($event, card)"
             >
+            
               <Transition name="fade" mode="out-in">
                 <div
                   v-if="card.is_editing_card"
@@ -238,7 +259,7 @@ const handleEditCard = (type, selectedCard) => {
                     placeholder="Add Card Title"
                   />
                   <textarea
-                    v-model="card.content"
+                    v-model="card.description"
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition duration-300 ease-in-out focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Add Card Content"
                   />
