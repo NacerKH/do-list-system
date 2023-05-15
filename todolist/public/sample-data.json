@@ -1,0 +1,34 @@
+{
+  "title": "Board Title",
+  "last_modified": "23/03/2022, 06:42:32",
+  "containers": [
+    {
+      "id": 1,
+      "name": "Introduction",
+      "is_editing_container": false,
+      "is_adding_card": false
+    },
+    {
+      "id": 2,
+      "name": "Todo",
+      "is_editing_container": false,
+      "is_adding_card": false
+    }
+  ],
+  "cards": [
+    {
+      "id": 1,
+      "id_container": 1,
+      "title": "About Kali",
+      "content": "Yeah i know. It's just another low quality Trello rip off.",
+      "is_editing_card": false
+    },
+    {
+      "id": 2,
+      "id_container": 1,
+      "title": "About Data",
+      "content": "Kali will automatically fetch sample data if none exist inside current State.\nkali is using persisted state, that means data won't be resetted even after full page reload.* \n\n\n *) as long as you did not delete the localStorage",
+      "is_editing_card": false
+    }
+  ]
+}
