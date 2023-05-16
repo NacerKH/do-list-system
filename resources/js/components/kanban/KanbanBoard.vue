@@ -190,20 +190,27 @@ const handleKanbanAction = async (mode, type, containerId, payload) => {
       : (payload.is_editing_card = false)
   }
   vuello.last_modified = new Date().toLocaleString('en-GB')
-  // store.dispatch('vuello/setVuello', vuello)
+  store.dispatch('vuello/setVuello', vuello)
   newCardData.id = null
   newCardData.id_container = null
   newCardData.title = null
   newCardData.content = null
 }
 const handleEditCard = async(type, selectedCard) => {
-  console.log(selectedCard)
+  console.log({selectedCard})
   if (type === 'change') {
     selectedCard.is_editing_card = true
  console.log(selectedCard);
     state.tempCards = vuello.cards.map((card) => ({ ...card }))
 
   } else if (type === 'save') {
+      try {
+      await axios.put(`/api/tasks/${selectedCard.id}`, selectedCard);
+      // Success! Handle any additional logic here
+    } catch (error) {
+      // Error occurred. Handle or display the error message
+      console.error(error);
+    }
     handleKanbanAction(null, null, null, selectedCard)
 
   } else {
