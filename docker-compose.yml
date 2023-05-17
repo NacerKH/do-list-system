@@ -4,7 +4,7 @@ services:
        build :
          context : .
          dockerfile: Dockerfile
-       image : todo-list 
+       image :  node:18-alpine 
        container_name : todo-list
        extra_hosts:
         - "host.docker.internal:host-gateway"
@@ -36,6 +36,7 @@ services:
 
        ports:
           - 6009:80
+          - '5173:5173'
        working_dir: /var/www
        volumes:
         - ./:/var/www
@@ -50,7 +51,7 @@ services:
         (php artisan config:cache || true) &&
         (php artisan route:clear || true)  &&
         (nginx -t && nginx) &&
-        php-fpm"
+        php-fpm "
 
    todo-list-db:
         image: mysql:5.7.22
@@ -59,6 +60,7 @@ services:
         tty: true
         ports:
           - "33070:3306"
+        
         environment:
           MYSQL_DATABASE: todo-list-db
           MYSQL_ROOT_PASSWORD: "passwd"
@@ -69,24 +71,7 @@ services:
         networks:
           -  todo-list-network
 
-   node-todo-list:
- 
-      image: node:18-alpine
-      container_name: todo-list-node
-      environment:
-       APP_URL : "https://localhost:6009"
-      working_dir: /var/www
-      tty : true
-      command : "npm install  && npm run dev "  
-      volumes:
-        - .:/var/www
-      depends_on : 
-        - todo-list
-      ports:
-        - '5173:5173'  
 
-      networks:
-       -  todo-list-network
   
 #Docker Networks
 networks:

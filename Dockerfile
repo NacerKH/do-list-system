@@ -1,5 +1,11 @@
 FROM php:8.1-fpm
 
+# Install Node.js
+
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+
+
+RUN apt-get install -y  nodejs 
 
 
 RUN apt-get update && \
@@ -35,7 +41,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log
 
 
 WORKDIR /var/www
-
+RUN npm install --silent 
 
 RUN chown -R www-data:www-data \
   /var/www/storage \
