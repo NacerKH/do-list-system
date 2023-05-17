@@ -56,4 +56,12 @@ class TaskController extends Controller
 
 
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function switch(Request $request, $resource_id)
+    {    
+        return $this->taskRepository->switchContainer($resource_id, $request->get('container_id'));
+    }
 }
