@@ -16,10 +16,11 @@ class Task extends Model
      */
     protected $fillable = [
         'title',
-        'description',
+        'content',
         'priority',
         'date_of_completion', 
-        'status'
+        'status',
+        'container_id'
     ];
     /**
      * The attributes that should be cast.
@@ -29,4 +30,9 @@ class Task extends Model
     protected $casts = [
         'date_of_completion' => 'datetime',
     ];
+    public function container()
+    {
+
+        return $this->belongsTo(Container::class, 'container_id', 'id');
+    }
 }
