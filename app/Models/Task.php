@@ -29,6 +29,7 @@ class Task extends Model
      */
     protected $casts = [
         'date_of_completion' => 'datetime',
+        'updated_at' => 'datetime:Y-m-d H:00',
     ];
     public function container()
     {

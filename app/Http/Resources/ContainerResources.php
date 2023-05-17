@@ -14,12 +14,12 @@ class ContainerResources extends JsonResource
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
-    {
+    {    $tasks= TaskResources::make(Task::get());
         return [
             'title' => 'Board Title',
-            'last_modified' => $this->last()->first()->update_at,
+            'last_modified' =>  $tasks->last()->first()->updated_at,
             'containers' =>  parent::toArray($request),
-            'cards' =>TaskResources::make(Task::get()),
+            'cards' => $tasks,
         ];
     }
 }
