@@ -44,4 +44,12 @@ The following APIs are available in the Laravel backend:
 - **PUT /api/tasks/{id}**: Updates a specific task by ID.
 - **DELETE /api/tasks/{id}**: Deletes a specific task by ID.
 
+### CONTAINER API
 
+- **GET /api/containers**: Retrieves all containers.
+- **POST /api/containers**: Creates a new container.
+- **GET /api/containers/{id}**: Retrieves a specific container by ID.
+- **PUT /api/containers/{id}**: Updates a specific container by ID.
+- **DELETE /api/containers/{id}**: Deletes a specific container by ID.
+
+![ GIF](https://github.com/khalifa-dv/do-list-system/blob/main/public/kaliTodo.gif)
